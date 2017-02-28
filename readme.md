@@ -2,9 +2,11 @@
 
 ![alt text](images/the_resistance_logo.png "The Resistance Logo")
 
-###The Resistance Drone is an autonomous drone created to deliver light payloads to specified locations via GPS. A Pixy Cam and Rasberry Pi are used for accuracy to get the drone closer to the target object. Once over the specified target, the drone can drop it's payload by rotating the dropping mechanism using a servo motor.  This project is for our Senior Design Class at SDSU.
+####The Resistance Drone is an autonomous drone created to deliver light payloads to specified locations via GPS. A Pixy Cam and Rasberry Pi are used for accuracy to get the drone closer to the target object. Once over the specified target, the drone can drop it's payload by rotating the dropping mechanism using a servo motor.  This project is for our Senior Design Class at SDSU.
 
 
+
+------------
 ##Requirements
 ------------
 - 3DR Solo Drone
@@ -17,7 +19,7 @@
 - Dropping Mechanism
 
 
-
+------------
 ##Simulator
 -----------
 
@@ -38,12 +40,15 @@ Open 3 terminals and enter one of these in each. Enter them in order!
 3. python /path-to-cloned-directory/the-resistance-drone.py
 
 The first command is to start SITL Simulator.
+
 The second command is to start MavProxy.
+
 The last command is to run the script that controls the drone.
 
 
-
+------------
 ## Team
+------------
 
 - Ameenah Alnaser
 - Artin Daryabari
@@ -56,8 +61,9 @@ The last command is to run the script that controls the drone.
 - Ryan Estacio
 
 
-
+------------
 ## Contact
+------------
 
 For more info contact Drew Haines at drew@dmdevco.com.
 
