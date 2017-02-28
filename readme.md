@@ -6,9 +6,8 @@
 
 
 
-------------
 ##Requirements
-------------
+
 - 3DR Solo Drone
 - Python >= 2.7.0 
 - [Clone The Resistance Drone Repo](https://github.com/drewhaines/resistance-drone)
@@ -19,9 +18,8 @@
 - Dropping Mechanism
 
 
-------------
+
 ##Simulator
------------
 
 SDSU Field GPS Coordinates:
 32.773632, -117.073654 - Home
@@ -46,9 +44,8 @@ The second command is to start MavProxy.
 The last command is to run the script that controls the drone.
 
 
-------------
+
 ## Team
-------------
 
 - Ameenah Alnaser
 - Artin Daryabari
@@ -61,9 +58,7 @@ The last command is to run the script that controls the drone.
 - Ryan Estacio
 
 
-------------
 ## Contact
-------------
 
 For more info contact Drew Haines at drew@dmdevco.com.
 
