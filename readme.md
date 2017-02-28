@@ -22,14 +22,14 @@
 ##Simulator
 
 SDSU Field GPS Coordinates:
-32.773632, -117.073654 - Home
-32.773902, -117.072860 - First point
-32.773523, -117.072120 - Second point
-32.773180, -117.072764 - Third point
+- 32.773632, -117.073654 - Home
+- 32.773902, -117.072860 - First point
+- 32.773523, -117.072120 - Second point
+- 32.773180, -117.072764 - Third point
 
 To run the simulator, you'll need:
-[MavProxy](https://erlerobotics.gitbooks.io/erle-robotics-mav-tools-free/content/en/installing_mavproxy.html)
-[APM Planner 2](http://ardupilot.org/planner2/docs/installing-apm-planner-2.html)
+- [MavProxy](https://erlerobotics.gitbooks.io/erle-robotics-mav-tools-free/content/en/installing_mavproxy.html)
+- [APM Planner 2](http://ardupilot.org/planner2/docs/installing-apm-planner-2.html)
 
 Open 3 terminals and enter one of these in each. Enter them in order!
 
@@ -37,11 +37,9 @@ Open 3 terminals and enter one of these in each. Enter them in order!
 2. mavproxy.py --master tcp:127.0.0.1:5760 --out 127.0.0.1:14550 --out 127.0.0.1:14551
 3. python /path-to-cloned-directory/the-resistance-drone.py
 
-The first command is to start SITL Simulator.
-
-The second command is to start MavProxy.
-
-The last command is to run the script that controls the drone.
+- The first command is to start SITL Simulator.
+- The second command is to start MavProxy.
+- The last command is to run the script that controls the drone.
 
 
 
