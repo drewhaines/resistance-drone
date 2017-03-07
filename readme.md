@@ -49,7 +49,7 @@ Open 3 terminals and enter one of these in each. Enter them in order!
 - Artin Daryabari
 - Drew Haines
 - Edwin Corpus Jr. 
-- Efrain Magallon
+- Efrain Magallon - Woo! We got the simulator working.
 - Mark Lawrence Galvan
 - Phoebe Nguyen
 - Ray Johnson
