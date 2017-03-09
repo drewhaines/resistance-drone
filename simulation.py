@@ -4,7 +4,8 @@ import time
 import math
 
 # Connect to the Vehicle
-vehicle = connect("udpin:0.0.0.0:14550", wait_ready=True)
+vehicle = connect("127.0.0.1:14551", wait_ready=True)
+
 
 # Function Definitions
 def arm_and_takeoff(aTargetAltitude):

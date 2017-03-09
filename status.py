@@ -10,8 +10,10 @@ and how to observe vehicle attribute (state) changes.
 
 Full documentation is provided at http://python.dronekit.io/examples/vehicle_state.html
 """
-from dronekit import connect, VehicleMode
+from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative
+from pymavlink import mavutil # Needed for command message definitions
 import time
+import math
 
 #Set up option parsing to get connection string
 import argparse
