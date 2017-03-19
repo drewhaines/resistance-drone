@@ -91,15 +91,15 @@ print("Set groundspeed to 5m/s.")
 vehicle.groundspeed=5
 
 # Fly a path using specific GPS coordinates.
-print("Going to Position 1")
+print("Going to GPS(32.773902, -117.072860)")
 point1 = LocationGlobalRelative(32.773902, -117.072860, target_alt)
 goto(point1)
 
-print("Going to Position 2")
+print("Going to GPS(32.773523, -117.072120)")
 point2 = LocationGlobalRelative(32.773523, -117.072120, target_alt)
 goto(point2)
 
-print("Going to Position 3")
+print("Going to GPS(32.773180, -117.072764)")
 point3 = LocationGlobalRelative(32.773180, -117.072764, target_alt)
 goto(point3)
 

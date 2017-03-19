@@ -105,9 +105,10 @@ while not vehicle.armed:
     time.sleep(1)
 print " Vehicle is armed: %s" % vehicle.armed
 
+target_alt = vehicle.location.global_relative_frame.alt+5;
 
 print "Taking off!"
-vehicle.simple_takeoff(100) # Take off to target altitude
+vehicle.simple_takeoff(target_alt) # Take off to target altitude
 
 print "Set default/target airspeed to 3"
 vehicle.airspeed = 3

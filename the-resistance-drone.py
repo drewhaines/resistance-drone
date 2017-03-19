@@ -76,7 +76,7 @@ def goto(gps_location, gotoFunction=vehicle.simple_goto):
         #print "DEBUG: mode: %s" % vehicle.mode.name
         remainingDistance=get_distance_metres(vehicle.location.global_relative_frame, targetLocation)
         print "Distance to target: ", remainingDistance
-        if remainingDistance<=targetDistance*0.01: #Just below target, in case of undershoot.
+        if remainingDistance<=targetDistance*0.1: #Just below target, in case of undershoot.
             print "Reached target"
             break;
         time.sleep(2)
@@ -84,23 +84,26 @@ def goto(gps_location, gotoFunction=vehicle.simple_goto):
 
 # Set altitude to 5 meters above the current altitude
 target_alt = vehicle.location.global_relative_frame.alt+5;
-arm_and_takeoff(target_alt)
+arm_and_takeoff(10)
 
 print("Set groundspeed to 5m/s.")
 vehicle.groundspeed=5
 
 # Fly a path using specific GPS coordinates.
 print("Going to Position 1")
-point1 = LocationGlobalRelative(32.773902, -117.072860, target_alt)
+point1 = LocationGlobalRelative(32.685490, -117.004233, 10)
 goto(point1)
+time.sleep(5)
 
 print("Going to Position 2")
-point2 = LocationGlobalRelative(32.773523, -117.072120, target_alt)
+point2 = LocationGlobalRelative(32.685673, -117.004331, 10)
 goto(point2)
+time.sleep(5)
 
 print("Going to Position 3")
-point3 = LocationGlobalRelative(32.773180, -117.072764, target_alt)
+point3 = LocationGlobalRelative(32.685685, -117.004074, 10)
 goto(point3)
+time.sleep(5)
 
 vehicle.mode = VehicleMode("RTL")
 print("Completed")
