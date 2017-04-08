@@ -83,27 +83,4 @@ while not vehicle.home_location:
 print "\n Home location: %s" % vehicle.home_location
 
 
-
-print "\nSet Vehicle.mode = GUIDED (currently: %s)" % vehicle.mode.name
-vehicle.mode = VehicleMode("GUIDED")
-while not vehicle.mode.name=='GUIDED':  #Wait until mode has changed
-    print " Waiting for mode change ..."
-    time.sleep(1)
-
-
-# Check that vehicle is armable
-while not vehicle.is_armable:
-    print " Waiting for vehicle to initialise..."
-    time.sleep(1)
-    # If required, you can provide additional information about initialisation
-    # using `vehicle.gps_0.fix_type` and `vehicle.mode.name`.
-
-print "\nSet Vehicle.armed=True (currently: %s)" % vehicle.armed
-vehicle.armed = True
-while not vehicle.armed:
-    print " Waiting for arming..."
-    time.sleep(1)
-print " Vehicle is armed: %s" % vehicle.armed
-
-
 print("Completed")
