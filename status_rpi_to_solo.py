@@ -22,7 +22,7 @@ parser.add_argument('--connect',
                    help="vehicle connection target string. If not specified, SITL automatically started and used.")
 args = parser.parse_args()
 
-vehicle = connect("udpin:0.0.0.0:14550", wait_ready=True)
+vehicle = connect("/dev/ttyS0", baud=921600, wait_ready=True)
 vehicle.wait_ready('autopilot_version')
 
 # Get all vehicle attributes (state)
@@ -106,5 +106,4 @@ while not vehicle.armed:
 print " Vehicle is armed: %s" % vehicle.armed
 
 
-vehicle.mode = VehicleMode("RTL")
 print("Completed")
