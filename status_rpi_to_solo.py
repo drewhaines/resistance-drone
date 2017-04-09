@@ -25,50 +25,54 @@ args = parser.parse_args()
 vehicle = connect("/dev/ttyS0", baud=921600, wait_ready=True)
 vehicle.wait_ready('autopilot_version')
 
+timestr = time.strftime("%Y_%m_%d-%H_%M_%S")
+filename = "~/flight_" + timestr + ".txt"
+f = open(filename, "w+")
+
 # Get all vehicle attributes (state)
-print "\nGet all vehicle attribute values:"
-print " Autopilot Firmware version: %s" % vehicle.version
-print "   Major version number: %s" % vehicle.version.major
-print "   Minor version number: %s" % vehicle.version.minor
-print "   Patch version number: %s" % vehicle.version.patch
-print "   Release type: %s" % vehicle.version.release_type()
-print "   Release version: %s" % vehicle.version.release_version()
-print "   Stable release?: %s" % vehicle.version.is_stable()
-print " Autopilot capabilities"
-print "   Supports MISSION_FLOAT message type: %s" % vehicle.capabilities.mission_float
-print "   Supports PARAM_FLOAT message type: %s" % vehicle.capabilities.param_float
-print "   Supports MISSION_INT message type: %s" % vehicle.capabilities.mission_int
-print "   Supports COMMAND_INT message type: %s" % vehicle.capabilities.command_int
-print "   Supports PARAM_UNION message type: %s" % vehicle.capabilities.param_union
-print "   Supports ftp for file transfers: %s" % vehicle.capabilities.ftp
-print "   Supports commanding attitude offboard: %s" % vehicle.capabilities.set_attitude_target
-print "   Supports commanding position and velocity targets in local NED frame: %s" % vehicle.capabilities.set_attitude_target_local_ned
-print "   Supports set position + velocity targets in global scaled integers: %s" % vehicle.capabilities.set_altitude_target_global_int
-print "   Supports terrain protocol / data handling: %s" % vehicle.capabilities.terrain
-print "   Supports direct actuator control: %s" % vehicle.capabilities.set_actuator_target
-print "   Supports the flight termination command: %s" % vehicle.capabilities.flight_termination
-print "   Supports mission_float message type: %s" % vehicle.capabilities.mission_float
-print "   Supports onboard compass calibration: %s" % vehicle.capabilities.compass_calibration
-print " Global Location: %s" % vehicle.location.global_frame
-print " Global Location (relative altitude): %s" % vehicle.location.global_relative_frame
-print " Local Location: %s" % vehicle.location.local_frame
-print " Attitude: %s" % vehicle.attitude
-print " Velocity: %s" % vehicle.velocity
-print " GPS: %s" % vehicle.gps_0
-print " Gimbal status: %s" % vehicle.gimbal
-print " Battery: %s" % vehicle.battery
-print " EKF OK?: %s" % vehicle.ekf_ok
-print " Last Heartbeat: %s" % vehicle.last_heartbeat
-print " Rangefinder: %s" % vehicle.rangefinder
-print " Rangefinder distance: %s" % vehicle.rangefinder.distance
-print " Rangefinder voltage: %s" % vehicle.rangefinder.voltage
-print " Heading: %s" % vehicle.heading
-print " Is Armable?: %s" % vehicle.is_armable
-print " System status: %s" % vehicle.system_status.state
-print " Groundspeed: %s" % vehicle.groundspeed    # settable
-print " Airspeed: %s" % vehicle.airspeed    # settable
-print " Mode: %s" % vehicle.mode.name    # settable
-print " Armed: %s" % vehicle.armed    # settable
+f.write("\nGet all vehicle attribute values:")
+f.write("\n Autopilot Firmware version: %s" % vehicle.version)
+f.write("\n   Major version number: %s" % vehicle.version.major)
+f.write("\n   Minor version number: %s" % vehicle.version.minor)
+f.write("\n   Patch version number: %s" % vehicle.version.patch)
+f.write("\n   Release type: %s" % vehicle.version.release_type() )
+f.write("\n   Release version: %s" % vehicle.version.release_version() )
+f.write("\n   Stable release?: %s" % vehicle.version.is_stable() )
+f.write("\n Autopilot capabilities")
+f.write("\n   Supports MISSION_FLOAT message type: %s" % vehicle.capabilities.mission_float)
+f.write("\n   Supports PARAM_FLOAT message type: %s" % vehicle.capabilities.param_float)
+f.write("\n   Supports MISSION_INT message type: %s" % vehicle.capabilities.mission_int)
+f.write("\n   Supports COMMAND_INT message type: %s" % vehicle.capabilities.command_int)
+f.write("\n   Supports PARAM_UNION message type: %s" % vehicle.capabilities.param_union)
+f.write("\n   Supports ftp for file transfers: %s" % vehicle.capabilities.ftp)
+f.write("\n   Supports commanding attitude offboard: %s" % vehicle.capabilities.set_attitude_target)
+f.write("\n   Supports commanding position and velocity targets in local NED frame: %s" % vehicle.capabilities.set_attitude_target_local_ned)
+f.write("\n   Supports set position + velocity targets in global scaled integers: %s" % vehicle.capabilities.set_altitude_target_global_int)
+f.write("\n   Supports terrain protocol / data handling: %s" % vehicle.capabilities.terrain)
+f.write("\n   Supports direct actuator control: %s" % vehicle.capabilities.set_actuator_target)
+f.write("\n   Supports the flight termination command: %s" % vehicle.capabilities.flight_termination)
+f.write("\n   Supports mission_float message type: %s" % vehicle.capabilities.mission_float)
+f.write("\n   Supports onboard compass calibration: %s" % vehicle.capabilities.compass_calibration)
+f.write("\n Global Location: %s" % vehicle.location.global_frame)
+f.write("\n Global Location (relative altitude): %s" % vehicle.location.global_relative_frame)
+f.write("\n Local Location: %s" % vehicle.location.local_frame)
+f.write("\n Attitude: %s" % vehicle.attitude)
+f.write("\n Velocity: %s" % vehicle.velocity)
+f.write("\n GPS: %s" % vehicle.gps_0)
+f.write("\n Gimbal status: %s" % vehicle.gimbal)
+f.write("\n Battery: %s" % vehicle.battery)
+f.write("\n EKF OK?: %s" % vehicle.ekf_ok )
+f.write("\n Last Heartbeat: %s" % vehicle.last_heartbeat)
+f.write("\n Rangefinder: %s" % vehicle.rangefinder)
+f.write("\n Rangefinder distance: %s" % vehicle.rangefinder.distance)
+f.write("\n Rangefinder voltage: %s" % vehicle.rangefinder.voltage)
+f.write("\n Heading: %s" % vehicle.heading)
+f.write("\n Is Armable?: %s" % vehicle.is_armable)
+f.write("\n System status: %s" % vehicle.system_status.state)
+f.write("\n Groundspeed: %s" % vehicle.groundspeed )   # settable
+f.write("\n Airspeed: %s" % vehicle.airspeed )   # settable
+f.write("\n Mode: %s" % vehicle.mode.name  )  # settable
+f.write("\n Armed: %s" % vehicle.armed )   # settable
 
 
 
@@ -78,9 +82,9 @@ while not vehicle.home_location:
     cmds.download()
     cmds.wait_ready()
     if not vehicle.home_location:
-        print " Waiting for home location ..."
-# We have a home location, so print it!
-print "\n Home location: %s" % vehicle.home_location
+        f.write("\n Waiting for home location ...")
+# We have a home location, so f.write it!
+f.write("\n Home location: %s" % vehicle.home_location)
 
 
-print("Completed")
+f.write("Completed")
