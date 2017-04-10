@@ -26,7 +26,7 @@ vehicle = connect("/dev/ttyS0", baud=921600, wait_ready=True)
 vehicle.wait_ready('autopilot_version')
 
 timestr = time.strftime("%Y_%m_%d-%H_%M_%S")
-filename = "~/flight_" + timestr + ".txt"
+filename = "flight_" + timestr + ".txt"
 f = open(filename, "w+")
 
 # Get all vehicle attributes (state)

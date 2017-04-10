@@ -4,7 +4,7 @@ import time
 import math
 
 timestr = time.strftime("%Y_%m_%d-%H_%M_%S")
-filename = "~/flight_" + timestr + ".txt"
+filename = "flight_" + timestr + ".txt"
 f = open(filename, "w+")
 
 # Connect to the Vehicle
@@ -39,7 +39,7 @@ def arm_and_takeoff(aTargetAltitude):
     # Wait until the vehicle reaches a safe height before processing the goto (otherwise the command
     #  after Vehicle.simple_takeoff will execute immediately).
     while True:
-        f.write("\n  Altitude: ", vehicle.location.global_relative_frame.alt)
+        f.write("\n  Altitude: %s " % vehicle.location.global_relative_frame.alt)
         #Break and return from function just below target altitude.
         if vehicle.location.global_relative_frame.alt>=aTargetAltitude*0.95:
             f.write("\n Reached target altitude")
@@ -59,19 +59,6 @@ def get_distance_metres(aLocation1, aLocation2):
     dlong = aLocation2.lon - aLocation1.lon
     return math.sqrt((dlat*dlat) + (dlong*dlong)) * 1.113195e5
 
-def pixy_goto():
-    # target_reached = 0
-    # while( target_reached == 0 ){
-    #     ask for data from the pixy
-    #     log to file
-    #
-    #     if target is close to center of screen
-    #         log to file "Centered over the target"
-    #         generate pwm to drive motor
-    #     else
-    #         turn coordinates into new gps location
-    #         goto new gps location
-    # }
 
 def goto(gps_location, gotoFunction=vehicle.simple_goto):
     """
@@ -93,7 +80,7 @@ def goto(gps_location, gotoFunction=vehicle.simple_goto):
     while vehicle.mode.name=="GUIDED": #Stop action if we are no longer in guided mode.
         #f.write("\n DEBUG: mode: %s" % vehicle.mode.name)
         remainingDistance=get_distance_metres(vehicle.location.global_relative_frame, targetLocation)
-        f.write("\n Distance to target: ", remainingDistance)
+        f.write("\n Distance to target: %s " % remainingDistance)
         if remainingDistance<=targetDistance*0.1: #Just below target, in case of undershoot.
             f.write("\n Reached target")
             f.write("Current location:  %s" % vehicle.location.local_frame)
@@ -109,18 +96,21 @@ vehicle.groundspeed=5
 
 # Fly a path using specific GPS coordinates.
 f.write("\n Going to Position 1")
-point1 = LocationGlobalRelative(32.685490, -117.004233, 10)
+point1 = LocationGlobalRelative(32.66508, -117.03006, 5)
 goto(point1)
+time.sleep(5)
 # use pixy to get closer
 # pixy_goto()
 
 f.write("\n Going to Position 2")
-point2 = LocationGlobalRelative(32.685673, -117.004331, 10)
+point2 = LocationGlobalRelative(32.66542, -117.03020, 5)
 goto(point2)
+time.sleep(5)
 
 f.write("\n Going to Position 3")
-point3 = LocationGlobalRelative(32.685685, -117.004074, 10)
+point3 = LocationGlobalRelative(32.66526, -117.02959, 5)
 goto(point3)
+time.sleep(5)
 
 vehicle.mode = VehicleMode("RTL")
 f.write("\n Completed")
