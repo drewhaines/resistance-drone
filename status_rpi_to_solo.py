@@ -15,6 +15,27 @@ from pymavlink import mavutil # Needed for command message definitions
 import time
 import math
 
+# Pixy Stuff
+from pixy import *
+from ctypes import *
+
+# Initialize Pixy Interpreter thread #
+pixy_init()
+
+class Blocks (Structure):
+  _fields_ = [ ("type", c_uint),
+               ("signature", c_uint),
+               ("x", c_uint),
+               ("y", c_uint),
+               ("width", c_uint),
+               ("height", c_uint),
+               ("angle", c_uint) ]
+
+blocks = BlockArray(30)
+frame  = 0
+
+
+
 #Set up option parsing to get connection string
 import argparse
 parser = argparse.ArgumentParser(description='Print out vehicle state information. Connects to SITL on local PC by default.')
@@ -74,6 +95,33 @@ f.write("\n Airspeed: %s" % vehicle.airspeed )   # settable
 f.write("\n Mode: %s" % vehicle.mode.name  )  # settable
 f.write("\n Armed: %s" % vehicle.armed )   # settable
 
+# Pixy test
+count = pixy_get_blocks(30, blocks)
+sums = [0, 0, 0, 0]       # x, y, width, height
+average = [0, 0, 0, 0]   # x, y, width, height
+
+if count > 0:
+    # Blocks found!
+    f.write("\n\n Blocks found!")
+    f.write("\n frame %3d:" % frame)
+    frame = frame + 1
+
+    for index in range (0, count):
+        sums[0] += blocks[index].x
+        sums[1] += blocks[index].y
+        sums[2] += blocks[index].width
+        sums[3] += blocks[index].height
+
+    average[0] = (sums[0]/count)
+    average[1] = (sums[1]/count)
+    average[2] = (sums[2]/count)
+    average[3] = (sums[3]/count)
+
+x = average[0]
+y = average[1]
+width = average[2]
+height = average[3]
+f.write( '\n [X=%3d Y=%3d WIDTH=%3d HEIGHT=%3d]' % (x, y, width, height))
 
 
 # Get Vehicle Home location - will be `None` until first set by autopilot

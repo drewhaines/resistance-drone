@@ -3,6 +3,7 @@ from pymavlink import mavutil # Needed for command message definitions
 import time
 import math
 
+# Create a timestamped file to log the data
 timestr = time.strftime("%Y_%m_%d-%H_%M_%S")
 filename = "~/flight_" + timestr + ".txt"
 f = open(filename, "w+")
@@ -59,19 +60,6 @@ def get_distance_metres(aLocation1, aLocation2):
     dlong = aLocation2.lon - aLocation1.lon
     return math.sqrt((dlat*dlat) + (dlong*dlong)) * 1.113195e5
 
-def pixy_goto():
-    # target_reached = 0
-    # while( target_reached == 0 ){
-    #     ask for data from the pixy
-    #     log to file
-    #
-    #     if target is close to center of screen
-    #         log to file "Centered over the target"
-    #         generate pwm to drive motor
-    #     else
-    #         turn coordinates into new gps location
-    #         goto new gps location
-    # }
 
 def goto(gps_location, gotoFunction=vehicle.simple_goto):
     """
@@ -111,8 +99,7 @@ vehicle.groundspeed=5
 f.write("\n Going to Position 1")
 point1 = LocationGlobalRelative(32.685490, -117.004233, 10)
 goto(point1)
-# use pixy to get closer
-# pixy_goto()
+
 
 f.write("\n Going to Position 2")
 point2 = LocationGlobalRelative(32.685673, -117.004331, 10)
