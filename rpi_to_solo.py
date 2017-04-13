@@ -1,7 +1,31 @@
+import RPi.GPIO as GPIO
 from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative
 from pymavlink import mavutil # Needed for command message definitions
 import time
 import math
+
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(11, GPIO.OUT)
+GPIO.setup(13, GPIO.OUT)
+
+# Pixy Stuff
+from pixy import *
+from ctypes import *
+
+# Initialize Pixy Interpreter thread #
+pixy_init()
+
+class Blocks (Structure):
+  _fields_ = [ ("type", c_uint),
+               ("signature", c_uint),
+               ("x", c_uint),
+               ("y", c_uint),
+               ("width", c_uint),
+               ("height", c_uint),
+               ("angle", c_uint) ]
+
+blocks = BlockArray(30)
+frame  = 0
 
 # Create a timestamped file to log the data
 timestr = time.strftime("%Y_%m_%d-%H_%M_%S")
@@ -46,6 +70,40 @@ def arm_and_takeoff(aTargetAltitude):
             f.write("\n Reached target altitude")
             break
         time.sleep(1)
+
+
+# Get data from the PixyCam
+def get_pixy_blocks(aLocation1, aLocation2):
+    """
+    Returns any objects that the Pixy detects in an array [x,y,width,height].
+    """
+    count = pixy_get_blocks(30, blocks)
+    sums = [0, 0, 0, 0]       # x, y, width, height
+    average = [0, 0, 0, 0]   # x, y, width, height
+
+    if count > 0:
+        # Blocks found!
+        f.write("\n\n Blocks found!")
+        f.write("\n frame %3d:" % frame)
+        frame = frame + 1
+
+        for index in range (0, count):
+            sums[0] += blocks[index].x
+            sums[1] += blocks[index].y
+            sums[2] += blocks[index].width
+            sums[3] += blocks[index].height
+
+        average[0] = (sums[0]/count)
+        average[1] = (sums[1]/count)
+        average[2] = (sums[2]/count)
+        average[3] = (sums[3]/count)
+
+    x = average[0]
+    y = average[1]
+    width = average[2]
+    height = average[3]
+    f.write( '\n [X=%3d Y=%3d WIDTH=%3d HEIGHT=%3d]' % (x, y, width, height))
+    return( [x, y, width, height] )
 
 
 # Get the distance between two LocationGlobal objects in metres
@@ -99,21 +157,59 @@ vehicle.groundspeed=5
 f.write("\n Going to Position 1")
 point1 = LocationGlobalRelative(32.66508, -117.03006, 5)
 goto(point1)
-
 time.sleep(5)
-# use pixy to get closer
-# pixy_goto()
+target = get_pixy_blocks
+if target != [0, 0, 0, 0]
+    # calculate cm/px
+    # calculate error
+    # calculate distance
+    # calculate angle from North
+    # calculate N and E or new GPS point
+    # goto(new point)
+
+# drop payload
+# toggle GPIO pins
+GPIO.output(11, 0)
+GPIO.output(13, 1)
 
 
 f.write("\n Going to Position 2")
 point2 = LocationGlobalRelative(32.66542, -117.03020, 5)
 goto(point2)
 time.sleep(5)
+target = get_pixy_blocks
+if target != [0, 0, 0, 0]
+    # calculate cm/px
+    # calculate error
+    # calculate distance
+    # calculate angle from North
+    # calculate N and E or new GPS point
+    # goto(new point)
+
+# drop payload
+# toggle GPIO pins
+GPIO.output(11, 1)
+GPIO.output(13, 0)
+
+
 
 f.write("\n Going to Position 3")
 point3 = LocationGlobalRelative(32.66526, -117.02959, 5)
 goto(point3)
 time.sleep(5)
+target = get_pixy_blocks
+if target != [0, 0, 0, 0]
+    # calculate cm/px
+    # calculate error
+    # calculate distance
+    # calculate angle from North
+    # calculate N and E or new GPS point
+    # goto(new point)
+
+# drop payload
+# toggle GPIO pins
+GPIO.output(11, 1)
+GPIO.output(13, 1)
 
 vehicle.mode = VehicleMode("RTL")
 f.write("\n Completed")
