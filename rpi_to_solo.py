@@ -3,6 +3,7 @@ from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelativ
 from pymavlink import mavutil # Needed for command message definitions
 import time
 import math
+from math import *
 
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(11, GPIO.OUT)
@@ -12,7 +13,7 @@ GPIO.setup(13, GPIO.OUT)
 from pixy import *
 from ctypes import *
 
-# Initialize Pixy Interpreter thread #
+# Initialize Pixy
 pixy_init()
 
 class Blocks (Structure):
@@ -36,12 +37,14 @@ f = open(filename, "w+")
 vehicle = connect("/dev/ttyS0", baud=921600, wait_ready=True)
 vehicle.wait_ready('autopilot_version')
 
+
+
+
 # Function Definitions
 def arm_and_takeoff(aTargetAltitude):
     """
     Arms vehicle and fly to aTargetAltitude.
     """
-
     f.write("\n Basic pre-arm checks")
     # Don't try to arm until autopilot is ready
     while not vehicle.is_armable:
@@ -72,8 +75,10 @@ def arm_and_takeoff(aTargetAltitude):
         time.sleep(1)
 
 
+
+
 # Get data from the PixyCam
-def get_pixy_blocks(aLocation1, aLocation2):
+def get_pixy_blocks():
     """
     Returns any objects that the Pixy detects in an array [x,y,width,height].
     """
@@ -106,6 +111,8 @@ def get_pixy_blocks(aLocation1, aLocation2):
     return( [x, y, width, height] )
 
 
+
+
 # Get the distance between two LocationGlobal objects in metres
 def get_distance_metres(aLocation1, aLocation2):
     """
@@ -117,6 +124,123 @@ def get_distance_metres(aLocation1, aLocation2):
     dlat = aLocation2.lat - aLocation1.lat
     dlong = aLocation2.lon - aLocation1.lon
     return math.sqrt((dlat*dlat) + (dlong*dlong)) * 1.113195e5
+
+
+
+
+def get_location_metres(original_location, dNorth, dEast):
+    """
+    Returns a LocationGlobal object containing the latitude/longitude `dNorth` and `dEast` metres from the
+    specified `original_location`. The returned LocationGlobal has the same `alt` value
+    as `original_location`.
+
+    The function is useful when you want to move the vehicle around specifying locations relative to
+    the current vehicle position.
+
+    The algorithm is relatively accurate over small distances (10m within 1km) except close to the poles.
+
+    For more information see:
+    http://gis.stackexchange.com/questions/2951/algorithm-for-offsetting-a-latitude-longitude-by-some-amount-of-meters
+    """
+    earth_radius = 6378137.0 #Radius of "spherical" earth
+    #Coordinate offsets in radians
+    dLat = dNorth/earth_radius
+    dLon = dEast/(earth_radius*math.cos(math.pi*original_location.lat/180))
+
+    #New position in decimal degrees
+    newlat = original_location.lat + (dLat * 180/math.pi)
+    newlon = original_location.lon + (dLon * 180/math.pi)
+    if type(original_location) is LocationGlobal:
+        targetlocation=LocationGlobal(newlat, newlon,original_location.alt)
+    elif type(original_location) is LocationGlobalRelative:
+        targetlocation=LocationGlobalRelative(newlat, newlon,original_location.alt)
+    else:
+        raise Exception("Invalid Location object passed")
+
+    return targetlocation;
+
+
+
+
+def pixy_goto():
+    """
+    Moves the vehicle using data from the pixy.
+    """
+    target = get_pixy_blocks # returns [x, y, width, height]
+    if target != [0, 0, 0, 0]
+
+        # calculate the average cm/px with an object of 30cm X 30cm
+        cm_per_pixel_1 = 30/target[2]
+        cm_per_pixel_2 = 30/target[3]
+        cm_per_pixel = (cm_per_pixel_1+cm_per_pixel_2)/2
+        f.write("\n  cm_per_pixel: %3d " % cm_per_pixel)
+
+        # calculate error
+        error_x = float(target[0]-160)
+        error_y = float((target[1]-100)*(-1)) # multiple by -1 because Pixy uses (0,0) as top left
+        hypotenuse = sqrt(error_x**2 + error_y**2)
+        f.write("\n  error_x: %3d " % error_x)
+        f.write("\n  error_y: %3d " % error_y)
+        f.write("\n  hypotenuse: %.3f " % hypotenuse)
+
+        # calculate angle from Pixy
+        if (error_x >= 0 && error_y >= 0):  # quadrant 1
+            pixy_angle = atan(float(error_x), float(error_y)) * 57.2957795
+        elif (error_x >= 0 && error_y < 0):   # quadrant 2
+            pixy_angle = (atan(float(-error_y), float(error_x)) * 57.2957795) + 90
+        elif (error_x < 0 && error_y < 0);   # quadrant 3
+            pixy_angle = (atan(float(-error_x), float(-error_y)) * 57.2957795) + 180
+        elif (error_x < 0 && error_y >= 0):   # quadrant 4
+            pixy_angle = (atan(float(error_y), float(-error_x)) * 57.2957795) +270
+
+        if pixy_angle < 0:
+            pixy_angle += 360.00
+        if pixy_angle > 360:
+            pixy_angle -= 360.00
+        f.write("\n  pixy_angle: %3d " % pixy_angle)
+
+        # calculate angle from North
+        angle_from_north = vehicle.heading + pixy_angle
+        if angle_from_north > 360:
+            angle_from_north -= 360.00
+        f.write("\n  angle_from_north: %3d " % angle_from_north)
+
+
+        # calculate the pixles N and E
+        if angle_from_north <= 90   # quadrant 1
+            pixels_north = hypotenuse*cos(radians(angle_from_north))
+            pixels_east = hypotenuse*sin(radians(angle_from_north))
+        elif angle_from_north <= 180   # quadrant 2
+            angle = angle_from_north-90
+            pixels_north = -(hypotenuse*sin(radians(angle)))
+            pixels_east = hypotenuse*cos(radians(angle))
+        elif angle_from_north <= 270   # quadrant 3
+            angle = angle_from_north-180
+            pixels_north = -(hypotenuse*cos(radians(angle)))
+            pixels_east = -(hypotenuse*sin(radians(angle)))
+        elif angle_from_north < 360   # quadrant 4
+            angle = angle_from_north-270
+            pixels_north = hypotenuse*sin(radians(angle))
+            pixels_east = -(hypotenuse*cos(radians(angle)))
+        f.write("\n  pixels_north: %.5f " % pixels_north)
+        f.write("\n  pixels_east: %.5f " % pixels_east)
+
+
+        # convert to distance in meters N and E
+        distance_north = (pixels_north*cm_per_pixel)/100
+        distance_east = (pixels_east*cm_per_pixel)/100
+        f.write("\n  distance_north: %.5f " % distance_north)
+        f.write("\n  distance_east: %.5f " % distance_east)
+
+        # get new targetLocation
+        current_location = vehicle.location.global_relative_frame
+        target_location = get_location_metres(current_location, distance_north, distance_east)
+        f.write("\n  target_location: %s " % target_location)
+
+        # goto target location
+        goto(target_location)
+
+
 
 
 def goto(gps_location, gotoFunction=vehicle.simple_goto):
@@ -146,6 +270,7 @@ def goto(gps_location, gotoFunction=vehicle.simple_goto):
             break;
         time.sleep(2)
 
+home = vehicle.home_location
 
 # Set altitude to 5 meters above the current altitude
 arm_and_takeoff(5)
@@ -153,63 +278,53 @@ arm_and_takeoff(5)
 f.write("\n Set groundspeed to 5m/s.")
 vehicle.groundspeed=5
 
+
+
+
 # Fly a path using specific GPS coordinates.
 f.write("\n Going to Position 1")
 point1 = LocationGlobalRelative(32.66508, -117.03006, 5)
 goto(point1)
-time.sleep(5)
-target = get_pixy_blocks
-if target != [0, 0, 0, 0]
-    # calculate cm/px
-    # calculate error
-    # calculate distance
-    # calculate angle from North
-    # calculate N and E or new GPS point
-    # goto(new point)
+time.sleep(3)
+pixy_goto()
 
-# drop payload
-# toggle GPIO pins
+# drop payload by toggling GPIO pins
 GPIO.output(11, 0)
 GPIO.output(13, 1)
+time.sleep(1)
+
+
 
 
 f.write("\n Going to Position 2")
 point2 = LocationGlobalRelative(32.66542, -117.03020, 5)
 goto(point2)
-time.sleep(5)
-target = get_pixy_blocks
-if target != [0, 0, 0, 0]
-    # calculate cm/px
-    # calculate error
-    # calculate distance
-    # calculate angle from North
-    # calculate N and E or new GPS point
-    # goto(new point)
+time.sleep(3)
+pixy_goto()
 
-# drop payload
-# toggle GPIO pins
+# drop payload by toggling GPIO pins
 GPIO.output(11, 1)
 GPIO.output(13, 0)
+time.sleep(1)
+
 
 
 
 f.write("\n Going to Position 3")
 point3 = LocationGlobalRelative(32.66526, -117.02959, 5)
 goto(point3)
-time.sleep(5)
-target = get_pixy_blocks
-if target != [0, 0, 0, 0]
-    # calculate cm/px
-    # calculate error
-    # calculate distance
-    # calculate angle from North
-    # calculate N and E or new GPS point
-    # goto(new point)
+time.sleep(3)
+pixy_goto()
 
-# drop payload
-# toggle GPIO pins
+# drop payload by toggling GPIO pins
 GPIO.output(11, 1)
 GPIO.output(13, 1)
+time.sleep(1)
+
+
+f.write("\n Going home")
+point4 = LocationGlobalRelative(home.lat, home.lon, 5)
+goto(point4)
 
 vehicle.mode = VehicleMode("RTL")
 f.write("\n Completed")
