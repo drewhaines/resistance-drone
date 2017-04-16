@@ -40,6 +40,9 @@ GPIO.setmode(GPIO.BOARD)
 GPIO.setup(11, GPIO.OUT)
 GPIO.setup(13, GPIO.OUT)
 
+GPIO.output(11, GPIO.LOW)
+GPIO.output(13, GPIO.LOW)
+
 #Set up option parsing to get connection string
 import argparse
 parser = argparse.ArgumentParser(description='Print out vehicle state information. Connects to SITL on local PC by default.')
@@ -128,20 +131,20 @@ f.write( '\n [X=%3d Y=%3d WIDTH=%3d HEIGHT=%3d]' % (x, y, width, height))
 
 # drop payload by toggling GPIO pins
 f.write("\n Drop GPIO 1!")
-GPIO.output(11, 0)
-GPIO.output(13, 1)
+GPIO.output(11, GPIO.LOW)
+GPIO.output(13, GPIO.HIGH)
 time.sleep(3)
 
 # drop payload by toggling GPIO pins
 f.write("\n Drop GPIO 2!")
-GPIO.output(11, 1)
-GPIO.output(13, 0)
+GPIO.output(11, GPIO.HIGH)
+GPIO.output(13, GPIO.LOW)
 time.sleep(3)
 
 # drop payload by toggling GPIO pins
 f.write("\n Drop GPIO 3!")
-GPIO.output(11, 1)
-GPIO.output(13, 1)
+GPIO.output(11, GPIO.HIGH)
+GPIO.output(13, GPIO.HIGH)
 time.sleep(3)
 
 
