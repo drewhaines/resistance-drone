@@ -5,9 +5,9 @@ import time
 import math
 from math import *
 
-GPIO.setmode(GPIO.BOARD)
-GPIO.setup(11, GPIO.OUT)
+GPIO.setmode(GPIO.BCM)
 GPIO.setup(13, GPIO.OUT)
+GPIO.setup(19, GPIO.OUT)
 
 # Pixy Stuff
 from pixy import *
@@ -166,8 +166,8 @@ def pixy_goto():
     """
     Moves the vehicle using data from the pixy.
     """
-    target = get_pixy_blocks # returns [x, y, width, height]
-    if target != [0, 0, 0, 0]
+    target = get_pixy_blocks() # returns [x, y, width, height]
+    if target != [0, 0, 0, 0]:
 
         # calculate the average cm/px with an object of 30cm X 30cm
         cm_per_pixel_1 = 30/target[2]
@@ -184,14 +184,14 @@ def pixy_goto():
         f.write("\n  hypotenuse: %.3f " % hypotenuse)
 
         # calculate angle from Pixy
-        if (error_x >= 0 && error_y >= 0):  # quadrant 1
-            pixy_angle = atan(float(error_x), float(error_y)) * 57.2957795
-        elif (error_x >= 0 && error_y < 0):   # quadrant 2
-            pixy_angle = (atan(float(-error_y), float(error_x)) * 57.2957795) + 90
-        elif (error_x < 0 && error_y < 0);   # quadrant 3
-            pixy_angle = (atan(float(-error_x), float(-error_y)) * 57.2957795) + 180
-        elif (error_x < 0 && error_y >= 0):   # quadrant 4
-            pixy_angle = (atan(float(error_y), float(-error_x)) * 57.2957795) +270
+        if (error_x >= 0 and error_y >= 0):  # quadrant 1
+            pixy_angle = atan(float(error_x)/float(error_y)) * 57.2957795
+        elif (error_x >= 0 and error_y < 0):   # quadrant 2
+            pixy_angle = (atan(float(-error_y)/float(error_x)) * 57.2957795) + 90
+        elif (error_x < 0 and error_y < 0):   # quadrant 3
+            pixy_angle = (atan(float(-error_x)/float(-error_y)) * 57.2957795) + 180
+        elif (error_x < 0 and error_y >= 0):   # quadrant 4
+            pixy_angle = (atan(float(error_y)/float(-error_x)) * 57.2957795) +270
 
         if pixy_angle < 0:
             pixy_angle += 360.00
@@ -207,18 +207,18 @@ def pixy_goto():
 
 
         # calculate the pixles N and E
-        if angle_from_north <= 90   # quadrant 1
+        if angle_from_north <= 90:   # quadrant 1
             pixels_north = hypotenuse*cos(radians(angle_from_north))
             pixels_east = hypotenuse*sin(radians(angle_from_north))
-        elif angle_from_north <= 180   # quadrant 2
+        elif angle_from_north <= 180:   # quadrant 2
             angle = angle_from_north-90
             pixels_north = -(hypotenuse*sin(radians(angle)))
             pixels_east = hypotenuse*cos(radians(angle))
-        elif angle_from_north <= 270   # quadrant 3
+        elif angle_from_north <= 270:   # quadrant 3
             angle = angle_from_north-180
             pixels_north = -(hypotenuse*cos(radians(angle)))
             pixels_east = -(hypotenuse*sin(radians(angle)))
-        elif angle_from_north < 360   # quadrant 4
+        elif angle_from_north < 360:   # quadrant 4
             angle = angle_from_north-270
             pixels_north = hypotenuse*sin(radians(angle))
             pixels_east = -(hypotenuse*cos(radians(angle)))
@@ -238,7 +238,24 @@ def pixy_goto():
         f.write("\n  target_location: %s " % target_location)
 
         # goto target location
-        goto(target_location)
+        targetLocation = target_location
+        currentLocation = vehicle.location.global_relative_frame
+        targetDistance = get_distance_metres(currentLocation, targetLocation)
+        vehicle.simple_goto(targetLocation)
+
+        #f.write("\n DEBUG: targetLocation: %s" % targetLocation)
+        #f.write("\n DEBUG: targetLocation: %s" % targetDistance)
+
+        while vehicle.mode.name=="GUIDED": #Stop action if we are no longer in guided mode.
+            #f.write("\n DEBUG: mode: %s" % vehicle.mode.name)
+            remainingDistance=get_distance_metres(vehicle.location.global_relative_frame, targetLocation)
+            f.write("\n Distance to target: %s " % remainingDistance)
+            if remainingDistance<=targetDistance*0.3: #Just below target, in case of undershoot.
+                f.write("\n Reached target")
+                f.write("Current location:  %s" % vehicle.location.local_frame)
+                break;
+            time.sleep(2)
+
 
 
 
@@ -289,8 +306,8 @@ time.sleep(3)
 pixy_goto()
 
 # drop payload by toggling GPIO pins
-GPIO.output(11, 0)
-GPIO.output(13, 1)
+GPIO.output(13, 0)
+GPIO.output(19, 1)
 time.sleep(1)
 
 
@@ -303,8 +320,8 @@ time.sleep(3)
 pixy_goto()
 
 # drop payload by toggling GPIO pins
-GPIO.output(11, 1)
-GPIO.output(13, 0)
+GPIO.output(13, 1)
+GPIO.output(19, 0)
 time.sleep(1)
 
 
@@ -317,8 +334,8 @@ time.sleep(3)
 pixy_goto()
 
 # drop payload by toggling GPIO pins
-GPIO.output(11, 1)
 GPIO.output(13, 1)
+GPIO.output(19, 1)
 time.sleep(1)
 
 
