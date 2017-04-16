@@ -36,7 +36,9 @@ class Blocks (Structure):
 blocks = BlockArray(30)
 frame  = 0
 
-
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(11, GPIO.OUT)
+GPIO.setup(13, GPIO.OUT)
 
 #Set up option parsing to get connection string
 import argparse
