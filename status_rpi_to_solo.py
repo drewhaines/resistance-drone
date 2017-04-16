@@ -123,6 +123,24 @@ width = average[2]
 height = average[3]
 f.write( '\n [X=%3d Y=%3d WIDTH=%3d HEIGHT=%3d]' % (x, y, width, height))
 
+# drop payload by toggling GPIO pins
+f.write("\n Drop GPIO 1!")
+GPIO.output(11, 0)
+GPIO.output(13, 1)
+time.sleep(3)
+
+# drop payload by toggling GPIO pins
+f.write("\n Drop GPIO 2!")
+GPIO.output(11, 1)
+GPIO.output(13, 0)
+time.sleep(3)
+
+# drop payload by toggling GPIO pins
+f.write("\n Drop GPIO 3!")
+GPIO.output(11, 1)
+GPIO.output(13, 1)
+time.sleep(3)
+
 
 # Get Vehicle Home location - will be `None` until first set by autopilot
 while not vehicle.home_location:
