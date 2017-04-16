@@ -48,7 +48,6 @@ parser.add_argument('--connect',
 args = parser.parse_args()
 
 vehicle = connect("/dev/ttyS0", baud=921600, wait_ready=True)
-vehicle.wait_ready('autopilot_version')
 
 timestr = time.strftime("%Y_%m_%d-%H_%M_%S")
 filename = "flight_" + timestr + ".txt"
@@ -146,15 +145,6 @@ GPIO.output(13, 1)
 time.sleep(3)
 
 
-# Get Vehicle Home location - will be `None` until first set by autopilot
-while not vehicle.home_location:
-    cmds = vehicle.commands
-    cmds.download()
-    cmds.wait_ready()
-    if not vehicle.home_location:
-        f.write("\n Waiting for home location ...")
-# We have a home location, so f.write it!
-f.write("\n Home location: %s" % vehicle.home_location)
 
 
 f.write("Completed")
