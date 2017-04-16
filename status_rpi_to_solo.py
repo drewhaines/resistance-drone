@@ -38,11 +38,11 @@ blocks = BlockArray(30)
 frame  = 0
 
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(17, GPIO.OUT)
-GPIO.setup(27, GPIO.OUT)
+GPIO.setup(13, GPIO.OUT)
+GPIO.setup(19, GPIO.OUT)
 
-GPIO.output(17, GPIO.LOW)
-GPIO.output(27, GPIO.LOW)
+GPIO.output(13, GPIO.LOW)
+GPIO.output(19, GPIO.LOW)
 
 #Set up option parsing to get connection string
 import argparse
@@ -130,22 +130,25 @@ width = average[2]
 height = average[3]
 f.write( '\n [X=%3d Y=%3d WIDTH=%3d HEIGHT=%3d]' % (x, y, width, height))
 
+
+f.write("\n Dropping payload using GPIO")
+time.sleep(3)
 # drop payload by toggling GPIO pins
 f.write("\n Drop GPIO 1!")
-GPIO.output(17, GPIO.LOW)
-GPIO.output(27, GPIO.HIGH)
+GPIO.output(13, GPIO.LOW)
+GPIO.output(19, GPIO.HIGH)
 time.sleep(3)
 
 # drop payload by toggling GPIO pins
 f.write("\n Drop GPIO 2!")
-GPIO.output(17, GPIO.HIGH)
-GPIO.output(27, GPIO.LOW)
+GPIO.output(13, GPIO.HIGH)
+GPIO.output(19, GPIO.LOW)
 time.sleep(3)
 
 # drop payload by toggling GPIO pins
 f.write("\n Drop GPIO 3!")
-GPIO.output(17, GPIO.HIGH)
-GPIO.output(27, GPIO.HIGH)
+GPIO.output(13, GPIO.HIGH)
+GPIO.output(19, GPIO.HIGH)
 time.sleep(3)
 
 
