@@ -152,3 +152,4 @@ time.sleep(3)
 
 
 f.write("Completed")
+GPIO.cleanup()
