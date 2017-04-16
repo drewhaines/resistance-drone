@@ -37,7 +37,6 @@ class Blocks (Structure):
 blocks = BlockArray(30)
 frame  = 0
 
-GPIO.cleanup()
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(17, GPIO.OUT)
 GPIO.setup(27, GPIO.OUT)
