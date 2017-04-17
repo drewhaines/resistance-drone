@@ -1,0 +1,110 @@
+
+ Basic pre-arm checks
+  Waiting for vehicle to initialise...
+  Waiting for vehicle to initialise...
+  Waiting for vehicle to initialise...
+  Waiting for vehicle to initialise...
+ Arming motors
+  Waiting for arming...
+ Taking off!
+  Altitude: 0.0 
+  Altitude: 0.0 
+  Altitude: 0.2 
+  Altitude: 1.48 
+  Altitude: 3.22 
+  Altitude: 4.54 
+  Altitude: 4.8 
+ Reached target altitude
+ Set groundspeed to 5m/s.
+ Going to Position 1
+ Distance to target: 93.3687825249 
+ Distance to target: 92.4611785896 
+ Distance to target: 87.6003312576 
+ Distance to target: 80.271598388 
+ Distance to target: 71.068002652 
+ Distance to target: 60.7838405189 
+ Distance to target: 48.7850796468 
+ Distance to target: 38.0235556201 
+ Distance to target: 27.155100035 
+ Distance to target: 14.9559809325 
+ Distance to target: 5.58721874683 
+ Reached targetCurrent location:  LocationLocal:north=27.6824970245,east=70.0835494995,down=-5.00313806534
+ [X=  0 Y=  0 WIDTH=  0 HEIGHT=  0]
+  cm_per_pixel:   6 
+  error_x: -80 
+  error_y:  50 
+  hypotenuse: 94.340 
+ pixy quadrant 4
+  pixy_angle: 302 
+  angle_from_north:  10 
+ pixy quadrant 1
+  pixels_north: 92.90504 
+  pixels_east: 16.39067 
+  distance_north: 5.57430 
+  distance_east: 0.98344 
+  target_location: LocationGlobalRelative:lat=32.7739555748,lon=-117.072840493,alt=4.98 
+ Distance to target: 5.69568998027 
+ Distance to target: 5.33566220595 
+ Distance to target: 5.61695085079 
+ Distance to target: 6.04537418217 
+ Distance to target: 6.21431621731 
+ Distance to target: 6.17924505571 
+ Distance to target: 6.05961110237 
+ Distance to target: 5.96790009688 
+ Distance to target: 5.94331404475 
+ Distance to target: 5.95773082142 
+ Distance to target: 5.99621993545 
+ Distance to target: 6.02423422797 
+ Distance to target: 6.0278557516 
+ Distance to target: 6.0172745826 
+ Distance to target: 6.00323738683 
+ Distance to target: 6.00323738683 
+ Distance to target: 6.02440988068 
+ Distance to target: 6.01382264877 
+ Distance to target: 6.01038934961 
+ Distance to target: 6.01757399815 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 
+ Distance to target: 6.02098261861 

@@ -110,7 +110,7 @@ def get_pixy_blocks():
     width = average[2]
     height = average[3]
     f.write( '\n [X=%3d Y=%3d WIDTH=%3d HEIGHT=%3d]' % (x, y, width, height))
-    block = [240, 50, 5, 5]
+    block = [80, 50, 5, 5]
     return( block )
 
 
@@ -294,14 +294,13 @@ def goto(gps_location, gotoFunction=vehicle.simple_goto):
             break;
         time.sleep(2)
 
-home = vehicle.home_location
+
 
 # Set altitude to 5 meters above the current altitude
 arm_and_takeoff(5)
 
 f.write("\n Set groundspeed to 5m/s.")
 vehicle.groundspeed=5
-
 
 
 
@@ -345,9 +344,8 @@ pixy_goto()
 # GPIO.output(19, 1)
 # time.sleep(1)
 
-
 f.write("\n Going home")
-point4 = LocationGlobalRelative(home.lat, home.lon, 5)
+point4 = LocationGlobalRelative(vehicle.home_location.lat, vehicle.home_location.lon, 5)
 goto(point4)
 
 vehicle.mode = VehicleMode("RTL")
