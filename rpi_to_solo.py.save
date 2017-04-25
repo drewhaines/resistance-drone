@@ -89,6 +89,8 @@ def get_pixy_blocks():
     if count > 0:
         # Blocks found!
         f.write("\n\n Blocks found!")
+        f.write("\n frame %3d:" % frame)
+        frame = frame + 1
 
         for index in range (0, count):
             sums[0] += blocks[index].x
@@ -168,8 +170,8 @@ def pixy_goto():
     if target != [0, 0, 0, 0]:
 
         # calculate the average cm/px with an object of 30cm X 30cm
-        cm_per_pixel_1 = 20/target[2]
-        cm_per_pixel_2 = 20/target[3]
+        cm_per_pixel_1 = 30/target[2]
+        cm_per_pixel_2 = 30/target[3]
         cm_per_pixel = (cm_per_pixel_1+cm_per_pixel_2)/2
         f.write("\n  cm_per_pixel: %3d " % cm_per_pixel)
 
@@ -240,10 +242,19 @@ def pixy_goto():
         currentLocation = vehicle.location.global_relative_frame
         targetDistance = get_distance_metres(currentLocation, targetLocation)
         vehicle.simple_goto(targetLocation)
-        time.sleep(3)
 
-        f.write("\n DEBUG: targetLocation: %s" % targetLocation)
-        f.write("\n DEBUG: targetLocation: %s" % targetDistance)
+        #f.write("\n DEBUG: targetLocation: %s" % targetLocation)
+        #f.write("\n DEBUG: targetLocation: %s" % targetDistance)
+
+        while vehicle.mode.name=="GUIDED": #Stop action if we are no longer in guided mode.
+            #f.write("\n DEBUG: mode: %s" % vehicle.mode.name)
+            remainingDistance=get_distance_metres(vehicle.location.global_relative_frame, targetLocation)
+            f.write("\n Distance to target: %s " % remainingDistance)
+            if remainingDistance<=targetDistance*0.3: #Just below target, in case of undershoot.
+                f.write("\n Reached target")
+                f.write("Current location:  %s" % vehicle.location.local_frame)
+                break;
+            time.sleep(2)
 
 
 
@@ -267,7 +278,7 @@ def goto(gps_location, gotoFunction=vehicle.simple_goto):
     #f.write("\n DEBUG: targetLocation: %s" % targetDistance)
 
     while vehicle.mode.name=="GUIDED": #Stop action if we are no longer in guided mode.
-        f.write("\n DEBUG: mode: %s" % vehicle.mode.name)
+        #f.write("\n DEBUG: mode: %s" % vehicle.mode.name)
         remainingDistance=get_distance_metres(vehicle.location.global_relative_frame, targetLocation)
         f.write("\n Distance to target: %s " % remainingDistance)
         if remainingDistance<=targetDistance*0.1: #Just below target, in case of undershoot.
@@ -278,7 +289,7 @@ def goto(gps_location, gotoFunction=vehicle.simple_goto):
 
 
 # Set altitude to 5 meters above the current altitude
-arm_and_takeoff(4)
+arm_and_takeoff(3)
 
 f.write("\n Set groundspeed to 5m/s.")
 vehicle.groundspeed=5
@@ -288,7 +299,7 @@ vehicle.groundspeed=5
 
 # Fly a path using specific GPS coordinates.
 f.write("\n Going to Position 1")
-point1 = LocationGlobalRelative(32.79144, -117.04690, 4)
+point1 = LocationGlobalRelative(32.79144, -117.04690, 3)
 goto(point1)
 time.sleep(1)
 pixy_goto()
@@ -302,7 +313,7 @@ time.sleep(1)
 
 
 f.write("\n Going to Position 2")
-point2 = LocationGlobalRelative(32.79135, -117.04699, 4)
+point2 = LocationGlobalRelative(32.79135, -117.04699, 3)
 goto(point2)
 time.sleep(1)
 pixy_goto()
@@ -316,26 +327,23 @@ time.sleep(1)
 
 
 f.write("\n Going to Position 3")
-point3 = LocationGlobalRelative(32.79144, -117.04714, 4)
+point3 = LocationGlobalRelative(32.79144, -117.04714, 3)
 goto(point3)
 time.sleep(1)
 pixy_goto()
 
 # drop payload by toggling GPIO pins
+
 GPIO.output(13, 1)
 GPIO.output(19, 1)
 time.sleep(1)
 
-# drop payload by toggling GPIO pins
-GPIO.output(13, 0)
-GPIO.output(19, 0)
-time.sleep(1)
 
 f.write("\n Going home")
 point4 = LocationGlobalRelative(vehicle.home_location.lat, vehicle.home_location.lon, 3)
 goto(point4)
 
-vehicle.mode = VehicleMode("LAND")
+vehicle.mode = VehicleMode("RTL")
 f.write("\n Completed")
 
 
