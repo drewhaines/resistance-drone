@@ -249,6 +249,7 @@ def pixy_goto():
 
 
 
+
 def goto(gps_location, gotoFunction=vehicle.simple_goto):
     """
     Moves the vehicle to a position dNorth metres North and dEast metres East of the current position.

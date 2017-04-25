@@ -1,32 +1,33 @@
-import RPi.GPIO as GPIO
+# import RPi.GPIO as GPIO
 from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative
 from pymavlink import mavutil # Needed for command message definitions
 import time
 import math
 from math import *
+from IPython import embed
 
-GPIO.setmode(GPIO.BOARD)
-GPIO.setup(11, GPIO.OUT)
-GPIO.setup(13, GPIO.OUT)
+# GPIO.setmode(GPIO.BOARD)
+# GPIO.setup(13, GPIO.OUT)
+# GPIO.setup(19, GPIO.OUT)
 
 # Pixy Stuff
-from pixy import *
-from ctypes import *
+# from pixy import *
+# from ctypes import *
 
 # Initialize Pixy
-pixy_init()
+#pixy_init()
 
-class Blocks (Structure):
-  _fields_ = [ ("type", c_uint),
-               ("signature", c_uint),
-               ("x", c_uint),
-               ("y", c_uint),
-               ("width", c_uint),
-               ("height", c_uint),
-               ("angle", c_uint) ]
-
-blocks = BlockArray(30)
-frame  = 0
+# class Blocks (Structure):
+#   _fields_ = [ ("type", c_uint),
+#                ("signature", c_uint),
+#                ("x", c_uint),
+#                ("y", c_uint),
+#                ("width", c_uint),
+#                ("height", c_uint),
+#                ("angle", c_uint) ]
+#
+# blocks = BlockArray(30)
+# frame  = 0
 
 # Create a timestamped file to log the data
 timestr = time.strftime("%Y_%m_%d-%H_%M_%S")
@@ -82,7 +83,8 @@ def get_pixy_blocks():
     """
     Returns any objects that the Pixy detects in an array [x,y,width,height].
     """
-    count = pixy_get_blocks(30, blocks)
+    # count = pixy_get_blocks(30, blocks)
+    count = 0
     sums = [0, 0, 0, 0]       # x, y, width, height
     average = [0, 0, 0, 0]   # x, y, width, height
 
@@ -108,7 +110,8 @@ def get_pixy_blocks():
     width = average[2]
     height = average[3]
     f.write( '\n [X=%3d Y=%3d WIDTH=%3d HEIGHT=%3d]' % (x, y, width, height))
-    return( [240, 50, 5, 5] )
+    block = [0, 0, 0, 0]
+    return( block )
 
 
 
@@ -166,12 +169,38 @@ def pixy_goto():
     """
     Moves the vehicle using data from the pixy.
     """
-    target = get_pixy_blocks # returns [x, y, width, height]
-    if target != [0, 0, 0, 0]
+    pixy_count = 0
+
+    while pixy_count < 5:
+        target = get_pixy_blocks() # returns [x, y, width, height]
+
+        if target != [0, 0, 0, 0]:
+            pixy_count = 5
+        elif target == [0, 0, 0, 0] and pixy_count == 0:
+            # say the target on the left the drone
+            target = [50, 101, 10, 10]
+            pixy_count += 1
+        elif target == [0, 0, 0, 0] and pixy_count == 1:
+            # say the target is behind drone's original location
+            target = [0, 199, 10, 10]
+            pixy_count += 1
+        elif target == [0, 0, 0, 0] and pixy_count == 2:
+            # say the target is to the right of the drone's original location
+            target = [0, 101, 10, 10]
+            pixy_count += 1
+        elif target == [0, 0, 0, 0] and pixy_count == 3:
+            # say the target infront of the drone's original location
+            target = [0, 101, 10, 10]
+            pixy_count += 1
+        elif target == [0, 0, 0, 0] and pixy_count == 4:
+            # go back to the original location to drop the payload
+            target = [0, 199, 10, 10]
+            pixy_count += 1
+
 
         # calculate the average cm/px with an object of 30cm X 30cm
-        cm_per_pixel_1 = 30/target[2]
-        cm_per_pixel_2 = 30/target[3]
+        cm_per_pixel_1 = 20/target[2]
+        cm_per_pixel_2 = 20/target[3]
         cm_per_pixel = (cm_per_pixel_1+cm_per_pixel_2)/2
         f.write("\n  cm_per_pixel: %3d " % cm_per_pixel)
 
@@ -184,18 +213,18 @@ def pixy_goto():
         f.write("\n  hypotenuse: %.3f " % hypotenuse)
 
         # calculate angle from Pixy
-        if (error_x >= 0 && error_y >= 0):  # quadrant 1
+        if (error_x >= 0 and error_y >= 0):  # quadrant 1
             f.write("\n pixy quadrant 1")
-            pixy_angle = atan(float(error_x), float(error_y)) * 57.2957795
-        elif (error_x >= 0 && error_y < 0):   # quadrant 2
+            pixy_angle = atan(float(error_x)/ float(error_y)) * 57.2957795
+        elif (error_x >= 0 and error_y < 0):   # quadrant 2
             f.write("\n pixy quadrant 2")
-            pixy_angle = (atan(float(-error_y), float(error_x)) * 57.2957795) + 90
-        elif (error_x < 0 && error_y < 0);   # quadrant 3
+            pixy_angle = (atan(float(-error_y)/ float(error_x)) * 57.2957795) + 90
+        elif (error_x < 0 and error_y < 0):  # quadrant 3
             f.write("\n pixy quadrant 3")
-            pixy_angle = (atan(float(-error_x), float(-error_y)) * 57.2957795) + 180
-        elif (error_x < 0 && error_y >= 0):   # quadrant 4
+            pixy_angle = (atan(float(-error_x)/ float(-error_y)) * 57.2957795) + 180
+        elif (error_x < 0 and error_y >= 0):   # quadrant 4
             f.write("\n pixy quadrant 4")
-            pixy_angle = (atan(float(error_y), float(-error_x)) * 57.2957795) +270
+            pixy_angle = (atan(float(error_y)/ float(-error_x)) * 57.2957795) +270
 
         if pixy_angle < 0:
             pixy_angle += 360.00
@@ -211,19 +240,19 @@ def pixy_goto():
 
 
         # calculate the pixles N and E
-        if angle_from_north <= 90   # quadrant 1
+        if angle_from_north <= 90:   # quadrant 1
             f.write("\n pixy quadrant 1")
             pixels_north = hypotenuse*cos(radians(angle_from_north))
             pixels_east = hypotenuse*sin(radians(angle_from_north))
-        elif angle_from_north <= 180   # quadrant 2
+        elif angle_from_north <= 180:   # quadrant 2
             angle = angle_from_north-90
             pixels_north = -(hypotenuse*sin(radians(angle)))
             pixels_east = hypotenuse*cos(radians(angle))
-        elif angle_from_north <= 270   # quadrant 3
+        elif angle_from_north <= 270:   # quadrant 3
             angle = angle_from_north-180
             pixels_north = -(hypotenuse*cos(radians(angle)))
             pixels_east = -(hypotenuse*sin(radians(angle)))
-        elif angle_from_north < 360   # quadrant 4
+        elif angle_from_north < 360:   # quadrant 4
             angle = angle_from_north-270
             pixels_north = hypotenuse*sin(radians(angle))
             pixels_east = -(hypotenuse*cos(radians(angle)))
@@ -243,7 +272,15 @@ def pixy_goto():
         f.write("\n  target_location: %s " % target_location)
 
         # goto target location
-        goto(target_location)
+        targetLocation = target_location
+        currentLocation = vehicle.location.global_relative_frame
+        targetDistance = get_distance_metres(currentLocation, targetLocation)
+        vehicle.simple_goto(targetLocation)
+        time.sleep(5)
+
+        f.write("\n DEBUG: targetLocation: %s" % targetLocation)
+        f.write("\n DEBUG: targetLocation: %s" % targetDistance)
+
 
 
 
@@ -275,61 +312,96 @@ def goto(gps_location, gotoFunction=vehicle.simple_goto):
             break;
         time.sleep(2)
 
-home = vehicle.home_location
+
 
 # Set altitude to 5 meters above the current altitude
-arm_and_takeoff(5)
+arm_and_takeoff(4)
 
 f.write("\n Set groundspeed to 5m/s.")
 vehicle.groundspeed=5
 
 
 
-
 # Fly a path using specific GPS coordinates.
 f.write("\n Going to Position 1")
-point1 = LocationGlobalRelative(32.66508, -117.03006, 5)
+point1 = LocationGlobalRelative(32.773902, -117.072860, 4)
 goto(point1)
-time.sleep(3)
+time.sleep(1)
 pixy_goto()
 
+# reduce altitude
+loc = vehicle.location.global_relative_frame #get current location
+loc.alt = loc.alt - 3 #add 10 meters
+vehicle.simple_goto(loc)
+time.sleep(5)
+
+
 # drop payload by toggling GPIO pins
-GPIO.output(11, 0)
-GPIO.output(13, 1)
-time.sleep(1)
+# GPIO.output(13, 0)
+# GPIO.output(19, 1)
+# time.sleep(1)
+
+# increase altitude
+loc = vehicle.location.global_relative_frame #get current location
+loc.alt = 4 #add 10 meters
+vehicle.simple_goto(loc) # send command
+time.sleep(5)
 
 
 
 
 f.write("\n Going to Position 2")
-point2 = LocationGlobalRelative(32.66542, -117.03020, 5)
+point2 = LocationGlobalRelative(32.773523, -117.072120, 4)
 goto(point2)
-time.sleep(3)
+time.sleep(1)
 pixy_goto()
 
-# drop payload by toggling GPIO pins
-GPIO.output(11, 1)
-GPIO.output(13, 0)
-time.sleep(1)
+# reduce altitude
+loc = vehicle.location.global_relative_frame #get current location
+loc.alt = loc.alt - 3 #add 10 meters
+vehicle.simple_goto(loc) # send command
+time.sleep(5)
 
+# drop payload by toggling GPIO pins
+# GPIO.output(13, 1)
+# GPIO.output(19, 0)
+# time.sleep(1)
+
+# increase altitude
+loc = vehicle.location.global_relative_frame #get current location
+loc.alt = 4 #add 10 meters
+vehicle.simple_goto(loc) # send command
+time.sleep(5)
 
 
 
 f.write("\n Going to Position 3")
-point3 = LocationGlobalRelative(32.66526, -117.02959, 5)
+point3 = LocationGlobalRelative(32.773180, -117.072764, 4)
 goto(point3)
-time.sleep(3)
+time.sleep(1)
 pixy_goto()
 
+# reduce altitude
+loc = vehicle.location.global_relative_frame #get current location
+loc.alt = loc.alt - 3 #add 10 meters
+vehicle.simple_goto(loc) # send command
+time.sleep(5)
+
 # drop payload by toggling GPIO pins
-GPIO.output(11, 1)
-GPIO.output(13, 1)
-time.sleep(1)
+# GPIO.output(13, 1)
+# GPIO.output(19, 1)
+# time.sleep(1)
+
+# increase altitude
+loc = vehicle.location.global_relative_frame #get current location
+loc.alt = 4 #add 10 meters
+vehicle.simple_goto(loc) # send command
+time.sleep(5)
 
 
 f.write("\n Going home")
-point4 = LocationGlobalRelative(home.lat, home.lon, 5)
+point4 = LocationGlobalRelative(vehicle.home_location.lat, vehicle.home_location.lon, 4)
 goto(point4)
 
-vehicle.mode = VehicleMode("RTL")
+vehicle.mode = VehicleMode("LAND")
 f.write("\n Completed")
