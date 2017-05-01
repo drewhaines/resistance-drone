@@ -9,6 +9,11 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(13, GPIO.OUT)
 GPIO.setup(19, GPIO.OUT)
 
+GPIO.setup(16, GPIO.IN)
+GPIO.setup(20, GPIO.IN
+GPIO.setup(21, GPIO.IN)
+
+
 # Pixy Stuff
 from pixy import *
 from ctypes import *
@@ -32,7 +37,6 @@ frame  = 0
 timestr = time.strftime("%Y_%m_%d-%H_%M_%S")
 filename = "flight_" + timestr + ".txt"
 f = open(filename, "w+")
-
 
 # Connect to the Vehicle
 vehicle = connect("/dev/ttyS0", baud=921600, wait_ready=True)
@@ -319,82 +323,158 @@ vehicle.groundspeed=5
 
 
 
-
-# Fly a path using specific GPS coordinates.
-f.write("\n Going to Position 1")
-point1 = LocationGlobalRelative(32.79144, -117.04690, 4)
-goto(point1)
-time.sleep(1)
-pixy_goto()
-
-# reduce altitude
-loc = vehicle.location.global_relative_frame #get current location
-loc.alt = loc.alt - 3 #add 10 meters
-vehicle.simple_goto(loc)
-time.sleep(5)
+freq_880 = GPIO.input(16)
+freq_1174 = GPIO.input(20)
+freq_1318 = GPIO.input(21)
 
 
-# drop payload by toggling GPIO pins
-GPIO.output(13, 0)
-GPIO.output(19, 1)
-time.sleep(1)
+if freq_880:
+    # Fly a path using specific GPS coordinates.
+    f.write("\n Going to Position 1")
+    point1 = LocationGlobalRelative(32.79144, -117.04690, 4)
+    goto(point1)
+    time.sleep(1)
+    pixy_goto()
 
-# increase altitude
-loc = vehicle.location.global_relative_frame #get current location
-loc.alt = 4 #add 10 meters
-vehicle.simple_goto(loc) # send command
-time.sleep(5)
+    # reduce altitude
+    loc = vehicle.location.global_relative_frame #get current location
+    loc.alt = loc.alt - 3
+    vehicle.simple_goto(loc)
+    time.sleep(5)
 
+    # drop payload by toggling GPIO pins
+    GPIO.output(13, 0)
+    GPIO.output(19, 1)
+    time.sleep(1)
 
-
-f.write("\n Going to Position 2")
-point2 = LocationGlobalRelative(32.79135, -117.04699, 4)
-goto(point2)
-time.sleep(1)
-pixy_goto()
-
-# reduce altitude
-loc = vehicle.location.global_relative_frame #get current location
-loc.alt = loc.alt - 3 #add 10 meters
-vehicle.simple_goto(loc)
-time.sleep(5)
-
-# drop payload by toggling GPIO pins
-GPIO.output(13, 1)
-GPIO.output(19, 0)
-time.sleep(1)
-
-# increase altitude
-loc = vehicle.location.global_relative_frame #get current location
-loc.alt = 4 #add 10 meters
-vehicle.simple_goto(loc) # send command
-time.sleep(5)
+    # increase altitude
+    loc = vehicle.location.global_relative_frame #get current location
+    loc.alt = 4
+    vehicle.simple_goto(loc) # send command
+    time.sleep(5)
 
 
+elif freq_1174:
+    f.write("\n Going to Position 2")
+    point2 = LocationGlobalRelative(32.79135, -117.04699, 4)
+    goto(point2)
+    time.sleep(1)
+    pixy_goto()
+
+    # reduce altitude
+    loc = vehicle.location.global_relative_frame #get current location
+    loc.alt = loc.alt - 3
+    vehicle.simple_goto(loc)
+    time.sleep(5)
+
+    # drop payload by toggling GPIO pins
+    GPIO.output(13, 1)
+    GPIO.output(19, 0)
+    time.sleep(1)
+
+    # increase altitude
+    loc = vehicle.location.global_relative_frame #get current location
+    loc.alt = 4
+    vehicle.simple_goto(loc) # send command
+    time.sleep(5)
 
 
-f.write("\n Going to Position 3")
-point3 = LocationGlobalRelative(32.79144, -117.04714, 4)
-goto(point3)
-time.sleep(1)
-pixy_goto()
+elif freq_1318:
+    f.write("\n Going to Position 3")
+    point3 = LocationGlobalRelative(32.79144, -117.04714, 4)
+    goto(point3)
+    time.sleep(1)
+    pixy_goto()
 
-# reduce altitude
-loc = vehicle.location.global_relative_frame #get current location
-loc.alt = loc.alt - 3 #add 10 meters
-vehicle.simple_goto(loc)
-time.sleep(5)
+    # reduce altitude
+    loc = vehicle.location.global_relative_frame #get current location
+    loc.alt = loc.alt - 3
+    vehicle.simple_goto(loc)
+    time.sleep(5)
 
-# drop payload by toggling GPIO pins
-GPIO.output(13, 0)
-GPIO.output(19, 0)
-time.sleep(1)
+    # drop payload by toggling GPIO pins
+    GPIO.output(13, 0)
+    GPIO.output(19, 0)
+    time.sleep(1)
 
-# increase altitude
-loc = vehicle.location.global_relative_frame #get current location
-loc.alt = 4 #add 10 meters
-vehicle.simple_goto(loc) # send command
-time.sleep(5)
+    # increase altitude
+    loc = vehicle.location.global_relative_frame #get current location
+    loc.alt = 4
+    vehicle.simple_goto(loc) # send command
+    time.sleep(5)
+
+
+else:
+    # Fly a path using specific GPS coordinates.
+    f.write("\n Going to Position 1")
+    point1 = LocationGlobalRelative(32.79144, -117.04690, 4)
+    goto(point1)
+    time.sleep(1)
+    pixy_goto()
+
+    # reduce altitude
+    loc = vehicle.location.global_relative_frame #get current location
+    loc.alt = loc.alt - 3
+    vehicle.simple_goto(loc)
+    time.sleep(5)
+
+    # drop payload by toggling GPIO pins
+    GPIO.output(13, 0)
+    GPIO.output(19, 1)
+    time.sleep(1)
+
+    # increase altitude
+    loc = vehicle.location.global_relative_frame #get current location
+    loc.alt = 4
+    vehicle.simple_goto(loc) # send command
+    time.sleep(5)
+
+    f.write("\n Going to Position 2")
+    point2 = LocationGlobalRelative(32.79135, -117.04699, 4)
+    goto(point2)
+    time.sleep(1)
+    pixy_goto()
+
+    # reduce altitude
+    loc = vehicle.location.global_relative_frame #get current location
+    loc.alt = loc.alt - 3
+    vehicle.simple_goto(loc)
+    time.sleep(5)
+
+    # drop payload by toggling GPIO pins
+    GPIO.output(13, 1)
+    GPIO.output(19, 0)
+    time.sleep(1)
+
+    # increase altitude
+    loc = vehicle.location.global_relative_frame #get current location
+    loc.alt = 4
+    vehicle.simple_goto(loc) # send command
+    time.sleep(5)
+
+    f.write("\n Going to Position 3")
+    point3 = LocationGlobalRelative(32.79144, -117.04714, 4)
+    goto(point3)
+    time.sleep(1)
+    pixy_goto()
+
+    # reduce altitude
+    loc = vehicle.location.global_relative_frame #get current location
+    loc.alt = loc.alt - 3
+    vehicle.simple_goto(loc)
+    time.sleep(5)
+
+    # drop payload by toggling GPIO pins
+    GPIO.output(13, 0)
+    GPIO.output(19, 0)
+    time.sleep(1)
+
+    # increase altitude
+    loc = vehicle.location.global_relative_frame #get current location
+    loc.alt = 4
+    vehicle.simple_goto(loc) # send command
+    time.sleep(5)
+
 
 f.write("\n Going home")
 point4 = LocationGlobalRelative(vehicle.home_location.lat, vehicle.home_location.lon, 3)
